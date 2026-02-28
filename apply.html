@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply Service | E-Seva Kendra</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0d47a1,#1976d2,#42a5f5);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    background:white;
+    width:100%;
+    max-width:850px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    padding:35px;
+}
+
+h1{
+    text-align:center;
+    color:#0d47a1;
+    margin-bottom:25px;
+}
+
+form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+input, textarea{
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.doc-section{
+    margin-top:15px;
+}
+
+.document-card{
+    border:2px dashed #1976d2;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+    background:#f9fbff;
+}
+
+.payment-section{
+    background:#f5f9ff;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
+
+.payment-option{
+    margin:8px 0;
+}
+
+.payment-details{
+    margin-top:15px;
+    padding:15px;
+    background:#ffffff;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+.note{
+    color:#d84315;
+    font-weight:600;
+    text-align:center;
+}
+
+button{
+    padding:14px;
+    border:none;
+    border-radius:25px;
+    background:#ff9800;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:15px;
+}
+
+.error{
+    color:red;
+    font-size:14px;
+    text-align:center;
+}
+
+.back-btn{
+    margin-top:10px;
+    background:#0d47a1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1 id="serviceTitle"></h1>
+
+<form id="applyForm">
+
+<input type="text" id="name" placeholder="Full Name" required>
+<input type="text" id="father" placeholder="Father / Husband Name" required>
+<input type="date" id="dob" required>
+<input type="text" id="aadhar" placeholder="Aadhar Number (12 digits)" required>
+<input type="text" id="mobile" placeholder="Mobile Number (10 digits)" required>
+<textarea rows="3" id="address" placeholder="Full Address" required></textarea>
+
+<div class="doc-section">
+<h3>Upload Required Documents</h3>
+<div id="documentUploads"></div>
+</div>
+
+<div class="payment-section">
+<h3>Select Payment Method</h3>
+
+<div class="payment-option">
+<input type="radio" name="payment" value="UPI" onclick="showPaymentDetails()"> UPI
+</div>
+
+<div class="payment-option">
+<input type="radio" name="payment" value="Card" onclick="showPaymentDetails()"> Debit / Credit Card
+</div>
+
+<div class="payment-option">
+<input type="radio" name="payment" value="Cash" onclick="showPaymentDetails()"> Cash Payment
+</div>
+
+<div id="paymentDetails"></div>
+</div>
+
+<div class="error" id="errorMsg"></div>
+
+<button type="submit">Submit Application</button>
+
+</form>
+
+<button class="back-btn" onclick="goBack()">Back to Services</button>
+
+</div>
+
+<script>
+
+/* Selected Service */
+const service = localStorage.getItem("selectedService") || "default";
+document.getElementById("serviceTitle").innerText = "Apply for " + service;
+
+/* Service Fees */
+const serviceFees = {
+"Aadhar New Registration":100,
+"PAN Card New":150,
+"Passport Apply":1500,
+"default":100
+};
+
+const serviceAmount = serviceFees[service] || serviceFees["default"];
+
+/* Required Documents */
+const serviceDocuments = {
+"Aadhar New Registration":["Birth Certificate","Address Proof","Passport Photo"],
+"PAN Card New":["Aadhar Card","Photo","Signature"],
+"Passport Apply":["Aadhar Card","Birth Certificate","Address Proof"],
+"default":["Aadhar Card","Address Proof"]
+};
+
+const docContainer = document.getElementById("documentUploads");
+let docs = serviceDocuments[service] || serviceDocuments["default"];
+
+docs.forEach(doc=>{
+let card=document.createElement("div");
+card.className="document-card";
+card.innerHTML=`
+<label>${doc}</label>
+<input type="file" required>
+`;
+docContainer.appendChild(card);
+});
+
+/* Payment Display */
+function showPaymentDetails(){
+
+let selected=document.querySelector('input[name="payment"]:checked');
+let box=document.getElementById("paymentDetails");
+box.innerHTML="";
+
+if(!selected) return;
+
+if(selected.value==="UPI"){
+box.innerHTML=`
+<div class="payment-details">
+<h4>Amount to Pay: ₹${serviceAmount}</h4>
+<img src="QR.jpg" style="width:180px;display:block;margin:10px auto;">
+<input type="text" id="transactionId" placeholder="Enter UPI Transaction ID">
+</div>`;
+}
+
+if(selected.value==="Card"){
+box.innerHTML=`
+<div class="payment-details">
+<h4>Amount to Pay: ₹${serviceAmount}</h4>
+<input type="text" id="cardNumber" placeholder="Card Number (16 digits)">
+<input type="text" id="expiry" placeholder="Expiry (MM/YY)">
+<input type="text" id="cvv" placeholder="CVV (3 digits)">
+</div>`;
+}
+
+if(selected.value==="Cash"){
+box.innerHTML=`
+<div class="payment-details">
+<h4>Amount to Pay: ₹${serviceAmount}</h4>
+<p class="note">Please pay ₹${serviceAmount} at E-Seva center.</p>
+</div>`;
+}
+}
+
+/* Submit */
+document.getElementById("applyForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+const errorMsg=document.getElementById("errorMsg");
+errorMsg.innerText="";
+
+let name=document.getElementById("name").value.trim();
+let father=document.getElementById("father").value.trim();
+let dob=document.getElementById("dob").value;
+let aadhar=document.getElementById("aadhar").value.trim();
+let mobile=document.getElementById("mobile").value.trim();
+let address=document.getElementById("address").value.trim();
+let payment=document.querySelector('input[name="payment"]:checked');
+
+/* Validation */
+if(!/^\d{12}$/.test(aadhar)){
+errorMsg.innerText="Aadhar must be 12 digits";
+return;
+}
+
+if(!/^\d{10}$/.test(mobile)){
+errorMsg.innerText="Mobile must be 10 digits";
+return;
+}
+
+if(!payment){
+errorMsg.innerText="Select payment method";
+return;
+}
+
+/* Collect Document Names */
+let uploadedDocs=[];
+let fileInputs=document.querySelectorAll("#documentUploads input[type='file']");
+fileInputs.forEach(input=>{
+if(input.files.length>0){
+uploadedDocs.push(input.files[0].name);
+}
+});
+
+/* Save Application */
+let applicationData={
+service:service,
+name:name,
+father:father,
+dob:dob,
+aadhar:aadhar,
+mobile:mobile,
+address:address,
+paymentMethod:payment.value,
+amount:serviceAmount,
+documents:uploadedDocs,
+applicationId:"ESK"+Math.floor(Math.random()*100000),
+status:"Pending"
+};
+
+let allApplications=JSON.parse(localStorage.getItem("allApplications"))||[];
+allApplications.push(applicationData);
+localStorage.setItem("allApplications",JSON.stringify(allApplications));
+
+localStorage.setItem("applicationData",JSON.stringify(applicationData));
+
+window.location.href="success.html";
+
+});
+
+function goBack(){
+window.location.href="services.html";
+}
+
+</script>
+
+</body>
+</html>

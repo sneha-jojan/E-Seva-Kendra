@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard | E-Seva Kendra</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f6f9;
+    padding:20px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+h2{
+    color:#0d47a1;
+}
+
+button{
+    padding:6px 12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:13px;
+}
+
+.logout{
+    background:red;
+    color:white;
+}
+
+.done{
+    background:green;
+    color:white;
+}
+
+.view{
+    background:#1976d2;
+    color:white;
+}
+
+.remove{
+    background:#d32f2f;
+    color:white;
+}
+
+.stats{
+    margin:20px 0;
+    display:flex;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    width:200px;
+    text-align:center;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,td{
+    padding:10px;
+    border:1px solid #ddd;
+    text-align:center;
+    font-size:14px;
+}
+
+th{
+    background:#0d47a1;
+    color:white;
+}
+
+.details-box{
+    background:#ffffff;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    display:none;
+}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+<h2>Admin Dashboard</h2>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="stats">
+<div class="card">
+<h3>Total Applications</h3>
+<p id="total"></p>
+</div>
+
+<div class="card">
+<h3>Pending</h3>
+<p id="pending"></p>
+</div>
+
+<div class="card">
+<h3>Completed</h3>
+<p id="completed"></p>
+</div>
+</div>
+
+<h3>Customer Applications</h3>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Service</th>
+<th>Mobile</th>
+<th>Application ID</th>
+<th>Status</th>
+<th>View</th>
+<th>Done</th>
+<th>Remove</th>
+</tr>
+</thead>
+<tbody id="tableData"></tbody>
+</table>
+
+<div class="details-box" id="detailsBox"></div>
+
+<script>
+
+/* Protect Page */
+if(localStorage.getItem("adminLoggedIn")!=="true"){
+    window.location.href="admin-login.html";
+}
+
+/* Load Applications */
+let applications = JSON.parse(localStorage.getItem("allApplications")) || [];
+
+updateStats();
+renderTable();
+
+function updateStats(){
+document.getElementById("total").innerText = applications.length;
+
+let pendingCount = applications.filter(app=>app.status==="Pending").length;
+let completedCount = applications.filter(app=>app.status==="Done").length;
+
+document.getElementById("pending").innerText = pendingCount;
+document.getElementById("completed").innerText = completedCount;
+}
+
+function renderTable(){
+
+let table=document.getElementById("tableData");
+table.innerHTML="";
+
+applications.forEach((app,index)=>{
+
+let row=`
+<tr>
+<td>${app.name}</td>
+<td>${app.service}</td>
+<td>${app.mobile}</td>
+<td>${app.applicationId}</td>
+<td>${app.status}</td>
+
+<td>
+<button class="view" onclick="viewDetails(${index})">View</button>
+</td>
+
+<td>
+${app.status==="Pending"
+? `<button class="done" onclick="markDone(${index})">Done</button>`
+: "✔"}
+</td>
+
+<td>
+<button class="remove" onclick="removeApp(${index})">Remove</button>
+</td>
+
+</tr>
+`;
+
+table.innerHTML += row;
+
+});
+}
+
+/* View Full Details */
+function viewDetails(index){
+
+let app = applications[index];
+
+let documentsHTML = "";
+
+if(app.documents && app.documents.length>0){
+    app.documents.forEach(doc=>{
+        documentsHTML += `<p><a href="${doc}" target="_blank">View Document</a></p>`;
+    });
+}else{
+    documentsHTML="No documents uploaded";
+}
+
+document.getElementById("detailsBox").style.display="block";
+
+document.getElementById("detailsBox").innerHTML = `
+<h3>Application Details</h3>
+<p><strong>Name:</strong> ${app.name}</p>
+<p><strong>Father Name:</strong> ${app.father}</p>
+<p><strong>DOB:</strong> ${app.dob}</p>
+<p><strong>Aadhar:</strong> ${app.aadhar}</p>
+<p><strong>Mobile:</strong> ${app.mobile}</p>
+<p><strong>Address:</strong> ${app.address}</p>
+<p><strong>Service:</strong> ${app.service}</p>
+<p><strong>Payment Method:</strong> ${app.paymentMethod}</p>
+<p><strong>Amount:</strong> ₹${app.amount}</p>
+<p><strong>Status:</strong> ${app.status}</p>
+<h4>Uploaded Documents:</h4>
+${documentsHTML}
+`;
+}
+
+/* Mark Done */
+function markDone(index){
+applications[index].status="Done";
+localStorage.setItem("allApplications",JSON.stringify(applications));
+updateStats();
+renderTable();
+}
+
+/* Remove Application */
+function removeApp(index){
+
+let confirmDelete = confirm("Are you sure you want to remove this application?");
+
+if(confirmDelete){
+applications.splice(index,1);
+localStorage.setItem("allApplications",JSON.stringify(applications));
+updateStats();
+renderTable();
+document.getElementById("detailsBox").style.display="none";
+}
+}
+
+/* Logout */
+function logout(){
+localStorage.removeItem("adminLoggedIn");
+window.location.href="admin-login.html";
+}
+
+</script>
+
+</body>
+</html>

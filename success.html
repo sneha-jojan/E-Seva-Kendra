@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payment Receipt | E-Seva Kendra</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:linear-gradient(135deg,#0d47a1,#42a5f5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
+
+.receipt{
+    background:white;
+    width:500px;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.header{
+    text-align:center;
+    border-bottom:2px solid #ccc;
+    padding-bottom:10px;
+    margin-bottom:20px;
+}
+
+.header h2{
+    color:#0d47a1;
+}
+
+.details p{
+    margin:8px 0;
+    font-size:15px;
+}
+
+.total{
+    margin-top:15px;
+    padding-top:10px;
+    border-top:2px dashed #999;
+    font-size:18px;
+    font-weight:bold;
+}
+
+button{
+    margin-top:20px;
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+.print-btn{
+    background:#ff9800;
+    color:white;
+}
+
+.home-btn{
+    background:#0d47a1;
+    color:white;
+    margin-left:10px;
+}
+
+.footer{
+    margin-top:20px;
+    text-align:center;
+    font-size:13px;
+    color:#777;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="receipt" id="receiptArea">
+
+<div class="header">
+<h2>E-Seva Kendra</h2>
+<p>Official Payment Receipt</p>
+</div>
+
+<div class="details">
+<p><strong>Service:</strong> <span id="serviceName"></span></p>
+<p><strong>Applicant Name:</strong> <span id="applicantName"></span></p>
+<p><strong>Application ID:</strong> <span id="appId"></span></p>
+<p><strong>Payment Method:</strong> <span id="paymentMethod"></span></p>
+<p><strong>Date:</strong> <span id="date"></span></p>
+</div>
+
+<div class="total">
+Total Paid: ₹<span id="amount"></span>
+</div>
+
+<div style="text-align:center;">
+<button class="print-btn" onclick="downloadReceipt()">Download Receipt</button>
+<button class="home-btn" onclick="goHome()">Go Home</button>
+</div>
+
+<div class="footer">
+Thank you for using E-Seva Kendra Services
+</div>
+
+</div>
+
+<script>
+
+/* Get Application Data */
+const data = JSON.parse(localStorage.getItem("applicationData"));
+
+if(data){
+
+document.getElementById("serviceName").innerText = data.service;
+document.getElementById("applicantName").innerText = data.name;
+document.getElementById("appId").innerText = data.applicationId;
+document.getElementById("paymentMethod").innerText = data.paymentMethod;
+document.getElementById("amount").innerText = data.amount;
+
+let today = new Date();
+document.getElementById("date").innerText =
+today.toLocaleDateString() + " " + today.toLocaleTimeString();
+
+/* Save receipt copy */
+localStorage.setItem("receiptCopy", JSON.stringify(data));
+}
+
+/* Download Receipt */
+function downloadReceipt(){
+window.print();
+}
+
+/* Go Home */
+function goHome(){
+window.location.href="home.html";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | E-Seva Kendra</title>
+
+<style>
+body{
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(135deg,#0d47a1,#1976d2,#42a5f5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    padding:40px;
+    width:350px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+h2{
+    text-align:center;
+    color:#0d47a1;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:25px;
+    background:#ff9800;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.error{
+    color:red;
+    font-size:14px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Login</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<div class="error" id="errorMsg"></div>
+
+<button onclick="login()">Login</button>
+
+<p style="text-align:center;margin-top:15px;">
+Don't have account? <a href="signup.html">Sign Up</a>
+</p>
+
+</div>
+
+<script>
+function login(){
+
+let email=document.getElementById("email").value.trim();
+let password=document.getElementById("password").value.trim();
+let error=document.getElementById("errorMsg");
+
+error.innerText="";
+
+let savedUser=JSON.parse(localStorage.getItem("user"));
+
+if(!savedUser){
+error.innerText="No account found. Please sign up first.";
+return;
+}
+
+if(email===savedUser.email && password===savedUser.password){
+
+localStorage.setItem("isLoggedIn","true");
+window.location.href="home.html";
+
+}else{
+error.innerText="Invalid email or password.";
+}
+
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Seva Kendra | Premium Services</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0d47a1,#1976d2,#42a5f5);
+    min-height:100vh;
+}
+
+/* Header */
+header{
+    text-align:center;
+    color:white;
+    padding:30px 20px;
+}
+
+/* Search */
+.search-box{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.search-box input{
+    width:60%;
+    padding:12px;
+    border-radius:30px;
+    border:none;
+    outline:none;
+}
+
+/* Grid */
+.services-container{
+    width:90%;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+    padding-bottom:60px;
+}
+
+/* Card */
+.card{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+    transition:0.4s;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.02);
+}
+
+.card img{
+    width:100%;
+    height:170px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:15px;
+    text-align:center;
+    color:white;
+}
+
+.card-content h3{
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+.card-content button{
+    padding:8px 20px;
+    border:none;
+    background:#ff9800;
+    color:white;
+    border-radius:20px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card-content button:hover{
+    background:#e65100;
+}
+
+/* Footer */
+footer{
+    background:#0d47a1;
+    color:white;
+    text-align:center;
+    padding:15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>E-Seva Kendra Premium Services</h1>
+    <p>Smart Digital Government Portal</p>
+</header>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search Service..." onkeyup="searchService()">
+</div>
+
+<div class="services-container" id="serviceList"></div>
+
+<footer>
+© 2026 E-Seva Kendra | Smart Governance Portal
+</footer>
+
+<script>
+const services = [
+"Aadhar New Registration","Aadhar Update","PAN Card New",
+"PAN Card Correction","Voter ID New","Voter ID Correction","Passport Apply",
+"Passport Renewal","Driving License New","Driving License Renewal",
+"Vehicle Registration","Income Certificate","Caste Certificate",
+"Domicile Certificate","Birth Certificate","Death Certificate",
+"Marriage Certificate","Property Registration","Land Record 7/12",
+"Ration Card New","Ration Card Update","Electricity Bill Payment",
+"Water Bill Payment","Mobile Recharge","Gas Booking",
+"Scholarship Apply","Pension Apply","PM Kisan Registration",
+"Ayushman Bharat Card","MGNREGA Job Card","Police Clearance Certificate",
+"RTI Application","GST Registration","Shop Act License",
+"Trade License","Startup Registration","Company Registration",
+"MSME Registration","Food License FSSAI","EPFO Registration",
+"ESIC Registration","Property Tax Payment","Water Connection Apply",
+"Electricity Connection Apply","Exam Form Apply",
+"University Admission Form","Online Complaint Registration",
+"Farmer Loan Application","Health Insurance Registration"
+];
+const serviceImages = {
+
+"Aadhar New Registration": "aadharreg.jpg",
+"Aadhar Update": "aadhar.jpg",
+
+"PAN Card New": "pan.webp",
+"PAN Card Correction": "panc.png",
+
+"Voter ID New": "voter.jpg",
+"Voter ID Correction": "voteridc.webp",
+
+"Passport Apply": "passport.jpg",
+"Passport Renewal": "pass.webp",
+
+"Driving License New": "driving.jpg",
+"Driving License Renewal": "drivingc.jpeg",
+
+"Vehicle Registration": "vehicle.avif",
+
+"Income Certificate": "income.jpg",
+"Caste Certificate": "cast.webp",
+"Domicile Certificate": "DomicileCertificate1.jpg",
+
+"Birth Certificate": "birth.webp",
+"Death Certificate": "death.jpeg",
+"Marriage Certificate": "marr.jpeg",
+
+"Property Registration": "pop.png",
+"Land Record 7/12": "land.webp",
+
+"Ration Card New": "oip.webp",
+"Ration Card Update": "RationUpdate.webp",
+
+"Electricity Bill Payment": "Electrical.webp",
+"Water Bill Payment": "Water.jpeg",
+
+"Mobile Recharge": "mobile1.webp",
+"Gas Booking": "gasbooking.jpeg",
+
+"Scholarship Apply": "schlorship.avif",
+"Pension Apply": "pension.jpeg",
+"PM Kisan Registration": "pm.png",
+
+"Ayushman Bharat Card": "AyushmanBharatCard.webp",
+"MGNREGA Job Card": "mgnrega.webp",
+
+"Police Clearance Certificate": "PoliceClearanceCertificate.webp",
+"RTI Application": "RTIApplication.webp",
+
+"GST Registration": "GST.jpeg",
+"Shop Act License": "ShopActLicense.jpeg",
+"Trade License": "TradeLicense.webp",
+
+"Startup Registration": "Start.png",
+"Company Registration": "company.webp",
+"MSME Registration": "msme.jpeg",
+
+"Food License FSSAI": "food.jpeg",
+"EPFO Registration": "EPFO.webp",
+"ESIC Registration": "ESICRegistration.jpeg",
+
+"Property Tax Payment": "tax.jpeg",
+"Water Connection Apply": "waterconnection.jpeg",
+"Electricity Connection Apply": "ElectricityConnectionApply.webp",
+
+"Exam Form Apply": "Exam.webp",
+"University Admission Form": "university.webp",
+
+"Online Complaint Registration": "onlinecomplete.webp",
+"Farmer Loan Application": "farm.jpeg",
+
+"Health Insurance Registration": "health.avif"
+};
+
+
+const container = document.getElementById("serviceList");
+
+services.forEach(service=>{
+    container.innerHTML += `
+    <div class="card">
+        <img src="${serviceImages[service]}" alt="${service}">
+        <div class="card-content">
+            <h3>${service}</h3>
+            <button onclick="goToDetails('${service}')">View Details</button>
+        </div>
+    </div>
+    `;
+});
+
+
+function searchService(){
+    let input=document.getElementById("searchInput").value.toLowerCase();
+    let cards=document.querySelectorAll(".card");
+
+    cards.forEach(card=>{
+        let text=card.innerText.toLowerCase();
+        card.style.display = text.includes(input) ? "block" : "none";
+    });
+}
+
+function goToDetails(service){
+    localStorage.setItem("selectedService", service);
+    window.location.href="service-details.html";
+}
+</script>
+
+</body>
+</html>

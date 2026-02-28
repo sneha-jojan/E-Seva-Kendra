@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Details | E-Seva Kendra</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0d47a1,#1976d2,#42a5f5);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    background:white;
+    width:100%;
+    max-width:900px;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.image-section img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+}
+
+.content{
+    padding:30px;
+}
+
+.content h1{
+    color:#0d47a1;
+    margin-bottom:15px;
+}
+
+.content p{
+    margin-bottom:15px;
+    line-height:1.6;
+    color:#444;
+}
+
+ul{
+    margin-bottom:20px;
+}
+
+ul li{
+    margin-bottom:8px;
+}
+
+.buttons{
+    display:flex;
+    gap:15px;
+}
+
+button{
+    padding:10px 25px;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.apply-btn{
+    background:#ff9800;
+    color:white;
+}
+
+.back-btn{
+    background:#0d47a1;
+    color:white;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+@media(max-width:768px){
+    .image-section img{
+        height:200px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="image-section">
+      <img id="serviceImage" src="" alt="">
+    </div>
+
+    <div class="content">
+        <h1 id="serviceTitle"></h1>
+        <p id="serviceDescription"></p>
+
+        <h3>Required Documents:</h3>
+        <ul id="documentList"></ul>
+
+        <h3>Processing Time:</h3>
+        <p>3 to 7 Working Days</p>
+
+        <div class="buttons">
+            <button class="apply-btn" onclick="applyNow()">Apply Now</button>
+            <button class="back-btn" onclick="goBack()">Back to Services</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+const service = localStorage.getItem("selectedService") || "Service";
+
+const serviceData = {
+
+"Aadhar New Registration": {
+description: "Apply for new Aadhar card registration issued by UIDAI.",
+documents: ["Birth Certificate","Address Proof","Passport Size Photo"]
+},
+
+"Aadhar Update": {
+description: "Update name, address, mobile or other details in Aadhar.",
+documents: ["Existing Aadhar Card","Supporting Update Document"]
+},
+
+"PAN Card New": {
+description: "Apply for new PAN card for financial transactions.",
+documents: ["Aadhar Card","Passport Photo","Signature"]
+},
+
+"PAN Card Correction": {
+description: "Correct details in your existing PAN card.",
+documents: ["Existing PAN Card","Correction Proof"]
+},
+
+"Voter ID New": {
+description: "Apply for new voter identity card.",
+documents: ["Age Proof","Address Proof","Photo"]
+},
+
+"Voter ID Correction": {
+description: "Correct information in voter ID card.",
+documents: ["Existing Voter ID","Correction Proof"]
+},
+
+"Passport Apply": {
+description: "Apply for new passport for international travel.",
+documents: ["Aadhar Card","Birth Certificate","Address Proof"]
+},
+
+"Passport Renewal": {
+description: "Renew your expired passport.",
+documents: ["Old Passport","Address Proof"]
+},
+
+"Driving License New": {
+description: "Apply for new driving license.",
+documents: ["Learner License","Address Proof","Medical Certificate"]
+},
+
+"Driving License Renewal": {
+description: "Renew existing driving license.",
+documents: ["Old Driving License","Medical Certificate"]
+},
+
+"Vehicle Registration": {
+description: "Register new vehicle with transport department.",
+documents: ["Purchase Invoice","Insurance Copy","Address Proof"]
+},
+
+"Income Certificate": {
+description: "Apply for income certificate.",
+documents: ["Aadhar Card","Income Proof","Address Proof"]
+},
+
+"Caste Certificate": {
+description: "Apply for caste certificate.",
+documents: ["Aadhar Card","Caste Proof","Address Proof"]
+},
+
+"Domicile Certificate": {
+description: "Apply for domicile certificate.",
+documents: ["Aadhar Card","Residence Proof"]
+},
+
+"Birth Certificate": {
+description: "Apply for birth certificate.",
+documents: ["Hospital Certificate","Parent ID Proof"]
+},
+
+"Death Certificate": {
+description: "Apply for death certificate.",
+documents: ["Hospital Death Report","Applicant ID Proof"]
+},
+
+"Marriage Certificate": {
+description: "Register marriage legally.",
+documents: ["Bride ID","Groom ID","Marriage Photo"]
+},
+
+"Property Registration": {
+description: "Register property legally.",
+documents: ["Sale Deed","Buyer ID","Seller ID"]
+},
+
+"Land Record 7/12": {
+description: "Get land record extract copy.",
+documents: ["Aadhar Card","Property Details"]
+},
+
+"Ration Card New": {
+description: "Apply for new ration card.",
+documents: ["Family Aadhar Cards","Address Proof","Income Certificate"]
+},
+
+"Ration Card Update": {
+description: "Update details in ration card.",
+documents: ["Old Ration Card","Update Proof"]
+},
+
+"Electricity Bill Payment": {
+description: "Pay electricity bill online.",
+documents: ["Electricity Consumer Number"]
+},
+
+"Water Bill Payment": {
+description: "Pay water bill online.",
+documents: ["Water Consumer Number"]
+},
+
+"Mobile Recharge": {
+description: "Recharge your prepaid mobile.",
+documents: ["Mobile Number"]
+},
+
+"Gas Booking": {
+description: "Book LPG gas cylinder.",
+documents: ["Gas Consumer Number"]
+},
+
+"Scholarship Apply": {
+description: "Apply for government scholarship.",
+documents: ["Income Certificate","Marksheet","Caste Certificate"]
+},
+
+"Pension Apply": {
+description: "Apply for government pension schemes.",
+documents: ["Aadhar Card","Age Proof","Bank Passbook"]
+},
+
+"PM Kisan Registration": {
+description: "Register for PM Kisan scheme.",
+documents: ["Aadhar Card","Land Record","Bank Passbook"]
+},
+
+"Ayushman Bharat Card": {
+description: "Apply for Ayushman Bharat health card.",
+documents: ["Aadhar Card","Ration Card"]
+},
+
+"MGNREGA Job Card": {
+description: "Apply for MGNREGA job card.",
+documents: ["Aadhar Card","Residence Proof"]
+},
+
+"Police Clearance Certificate": {
+description: "Apply for police clearance certificate.",
+documents: ["Aadhar Card","Address Proof","Passport Copy"]
+},
+
+"RTI Application": {
+description: "File RTI application.",
+documents: ["Aadhar Card","Application Letter"]
+},
+
+"GST Registration": {
+description: "Register your business under GST.",
+documents: ["PAN Card","Business Address Proof","Bank Details"]
+},
+
+"Shop Act License": {
+description: "Apply for shop act license.",
+documents: ["Shop Address Proof","Owner ID"]
+},
+
+"Trade License": {
+description: "Apply for trade license.",
+documents: ["Business Address Proof","Owner ID"]
+},
+
+"Startup Registration": {
+description: "Register startup legally.",
+documents: ["Founder ID","Business Plan"]
+},
+
+"Company Registration": {
+description: "Register company legally.",
+documents: ["Director ID","PAN Card","Address Proof"]
+},
+
+"MSME Registration": {
+description: "Register under MSME scheme.",
+documents: ["Aadhar Card","Business Details"]
+},
+
+"Food License FSSAI": {
+description: "Apply for FSSAI food license.",
+documents: ["Aadhar Card","Business Address Proof","Food Safety Certificate"]
+},
+
+"EPFO Registration": {
+description: "Register company under EPFO.",
+documents: ["Company PAN","Employee Details"]
+},
+
+"ESIC Registration": {
+description: "Register company under ESIC.",
+documents: ["Company PAN","Employee Details"]
+},
+
+"Property Tax Payment": {
+description: "Pay property tax online.",
+documents: ["Property ID","Previous Receipt"]
+},
+
+"Water Connection Apply": {
+description: "Apply for new water connection.",
+documents: ["Address Proof","Property Ownership Proof"]
+},
+
+"Electricity Connection Apply": {
+description: "Apply for new electricity connection.",
+documents: ["Address Proof","Property Ownership Proof"]
+},
+
+"Exam Form Apply": {
+description: "Apply for examination form.",
+documents: ["Aadhar Card","Marksheet","Photo"]
+},
+
+"University Admission Form": {
+description: "Apply for university admission.",
+documents: ["Marksheet","Transfer Certificate","Photo"]
+},
+
+"Online Complaint Registration": {
+description: "Register complaint online.",
+documents: ["Aadhar Card","Complaint Details"]
+},
+
+"Farmer Loan Application": {
+description: "Apply for farmer loan.",
+documents: ["Aadhar Card","Land Record","Bank Passbook"]
+},
+
+"Health Insurance Registration": {
+description: "Register for health insurance scheme.",
+documents: ["Aadhar Card","Medical History","Bank Details"]
+}
+
+};
+const serviceImages = {
+
+"Aadhar New Registration": "aadharreg.jpg",
+"Aadhar Update": "aadhar.jpg",
+
+"PAN Card New": "pan.webp",
+"PAN Card Correction": "panc.png",
+
+"Voter ID New": "voter.jpg",
+"Voter ID Correction": "voteridc.webp",
+
+"Passport Apply": "passport.jpg",
+"Passport Renewal": "pass.webp",
+
+"Driving License New": "driving.jpg",
+"Driving License Renewal": "drivingc.jpeg",
+
+"Vehicle Registration": "vehicle.avif",
+
+"Income Certificate": "income.jpg",
+"Caste Certificate": "cast.webp",
+"Domicile Certificate": "DomicileCertificate1.jpg",
+
+"Birth Certificate": "birth.webp",
+"Death Certificate": "death.jpeg",
+"Marriage Certificate": "marr.jpeg",
+
+"Property Registration": "pop.png",
+"Land Record 7/12": "land.webp",
+
+"Ration Card New": "oip.webp",
+"Ration Card Update": "RationUpdate.webp",
+
+"Electricity Bill Payment": "Electrical.webp",
+"Water Bill Payment": "Water.jpeg",
+
+"Mobile Recharge": "mobile1.webp",
+"Gas Booking": "gasbooking.jpeg",
+
+"Scholarship Apply": "schlorship.avif",
+"Pension Apply": "pension.jpeg",
+"PM Kisan Registration": "pm.png",
+
+"Ayushman Bharat Card": "AyushmanBharatCard.webp",
+"MGNREGA Job Card": "mgnrega.webp",
+
+"Police Clearance Certificate": "PoliceClearanceCertificate.webp",
+"RTI Application": "RTIApplication.webp",
+
+"GST Registration": "GST.jpeg",
+"Shop Act License": "ShopActLicense.jpeg",
+"Trade License": "TradeLicense.webp",
+
+"Startup Registration": "Start.png",
+"Company Registration": "company.webp",
+"MSME Registration": "msme.jpeg",
+
+"Food License FSSAI": "food.jpeg",
+"EPFO Registration": "EPFO.webp",
+"ESIC Registration": "ESICRegistration.jpeg",
+
+"Property Tax Payment": "tax.jpeg",
+"Water Connection Apply": "waterconnection.jpeg",
+"Electricity Connection Apply": "ElectricityConnectionApply.webp",
+
+"Exam Form Apply": "Exam.webp",
+"University Admission Form": "university.webp",
+
+"Online Complaint Registration": "onlinecomplete.webp",
+"Farmer Loan Application": "farm.jpeg",
+
+"Health Insurance Registration": "health.avif"
+};
+/* Set Service Image */
+if(serviceImages[service]){
+    document.getElementById("serviceImage").src = serviceImages[service];
+}else{
+    document.getElementById("serviceImage").src = "images/default.jpg";
+}
+
+
+document.getElementById("serviceTitle").innerText = service;
+
+if(serviceData[service]){
+document.getElementById("serviceDescription").innerText =
+serviceData[service].description;
+
+const ul = document.getElementById("documentList");
+serviceData[service].documents.forEach(doc=>{
+ul.innerHTML += `<li>${doc}</li>`;
+});
+}else{
+document.getElementById("serviceDescription").innerText =
+"Apply for this government service digitally through E-Seva Kendra portal.";
+
+document.getElementById("documentList").innerHTML =
+"<li>Aadhar Card</li><li>Address Proof</li><li>Supporting Documents</li>";
+}
+
+function applyNow(){
+window.location.href="apply.html";
+}
+
+function goBack(){
+window.location.href="services.html";
+}
+
+</script>
+
+
+</body>
+</html>

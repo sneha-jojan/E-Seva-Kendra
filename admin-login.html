@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login | E-Seva Kendra</title>
+<style>
+body{
+    font-family:Arial;
+    background:linear-gradient(135deg,#0d47a1,#42a5f5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.box{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    width:350px;
+    text-align:center;
+}
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+button{
+    padding:10px 20px;
+    background:#ff9800;
+    border:none;
+    color:white;
+    border-radius:20px;
+    cursor:pointer;
+}
+.error{
+    color:red;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Admin Login</h2>
+
+<input type="text" id="username" placeholder="Admin Username">
+<input type="password" id="password" placeholder="Password">
+
+<div class="error" id="errorMsg"></div>
+
+<button onclick="adminLogin()">Login</button>
+</div>
+
+<script>
+
+function adminLogin(){
+
+let user=document.getElementById("username").value;
+let pass=document.getElementById("password").value;
+let error=document.getElementById("errorMsg");
+
+/* Default Admin Credentials */
+if(user==="admin" && pass==="admin123"){
+
+localStorage.setItem("adminLoggedIn","true");
+window.location.href="admin-dashboard.html";
+
+}else{
+error.innerText="Invalid Admin Credentials";
+}
+
+}
+
+</script>
+</body>
+</html>
